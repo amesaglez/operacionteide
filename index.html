@@ -1,0 +1,636 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Operación Teide Sistemas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{
+  --bg:#EDF0EE; --surface:#FFFFFF; --surface2:#F4F7F5; --ink:#12201F; --muted:#4C605D; --line:#C7D2CF;
+  --accent:#D13A17; --accent-ink:#FFFFFF; --sea:#0B6E7A; --ok:#0F7A4A; --okbg:#E1F3EA; --bad:#B3261E; --badbg:#FBE7E4;
+  --contour:rgba(11,110,122,.10);
+  --display:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif; --body:'Figtree','Segoe UI',system-ui,sans-serif; --mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#0E1415; --surface:#162022; --surface2:#1C292B; --ink:#E7EFED; --muted:#9BB0AD; --line:#2C3E40;
+    --accent:#FF6A45; --accent-ink:#1A0B07; --sea:#4DC3CF; --ok:#4ADE9A; --okbg:#10291E; --bad:#FF8A80; --badbg:#321716;
+    --contour:rgba(77,195,207,.09);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0E1415; --surface:#162022; --surface2:#1C292B; --ink:#E7EFED; --muted:#9BB0AD; --line:#2C3E40;
+  --accent:#FF6A45; --accent-ink:#1A0B07; --sea:#4DC3CF; --ok:#4ADE9A; --okbg:#10291E; --bad:#FF8A80; --badbg:#321716;
+  --contour:rgba(77,195,207,.09);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.5;min-height:100vh;position:relative}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:repeating-radial-gradient(circle at 85% -10%,transparent 0 26px,var(--contour) 26px 27.5px),
+             repeating-radial-gradient(circle at 5% 110%,transparent 0 34px,var(--contour) 34px 35.5px)}
+main{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:20px 16px 56px}
+h1,h2,h3{font-family:var(--display);line-height:1.1;margin:0}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--sea);font-weight:600}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--sea);outline-offset:2px}
+.btn{background:var(--accent);color:var(--accent-ink);border:0;border-radius:10px;padding:13px 22px;font-weight:600;font-size:17px;min-height:48px}
+.btn:hover{filter:brightness(1.07)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--ink);border:2px solid var(--line)}
+.btn.sea{background:var(--sea);color:#fff}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn.sea{color:#06191B}}
+:root[data-theme="dark"] .btn.sea{color:#06191B}
+
+/* intro */
+.hero{padding:36px 0 18px}
+.hero h1{font-size:clamp(40px,10vw,72px);font-weight:800;letter-spacing:-.02em;margin:10px 0 12px}
+.hero h1 span{color:var(--accent)}
+.hero p.lead{font-size:19px;max-width:34em;color:var(--muted);margin:0}
+.panel{background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:20px}
+.rules{list-style:none;margin:18px 0;padding:0;display:grid;gap:10px}
+.rules li{display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:start}
+.rules b.n{font-family:var(--mono);font-size:13px;background:var(--sea);color:#fff;border-radius:6px;padding:3px 0;text-align:center}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .rules b.n{color:#06191B}}
+:root[data-theme="dark"] .rules b.n{color:#06191B}
+label.f{display:block;font-weight:600;margin:14px 0 6px}
+input.t{width:100%;font:inherit;padding:12px 14px;border-radius:10px;border:2px solid var(--line);background:var(--surface2);color:var(--ink)}
+input.t:focus{border-color:var(--sea);outline:none}
+.err{color:var(--bad);font-weight:600;margin:8px 0 0;min-height:1.4em}
+
+/* play */
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:4px 0 10px}
+.score{font-family:var(--mono);font-weight:600;font-size:14px}
+.ticks{display:grid;grid-template-columns:repeat(12,1fr);gap:4px;margin-bottom:18px}
+.tick{height:8px;border-radius:4px;background:var(--line)}
+.tick.ok{background:var(--ok)} .tick.rev{background:var(--bad)} .tick.cur{background:var(--accent)}
+.tick.g1{margin-right:6px} .tick.g2{margin-right:6px}
+.card{background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:20px 18px}
+.tagrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.tag{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;border:1.5px solid var(--sea);color:var(--sea);padding:3px 9px;border-radius:999px;font-weight:600}
+.tag.step{border-color:var(--accent);color:var(--accent)}
+.story{margin:0 0 14px;font-size:18px}
+.sys{background:var(--surface2);border-left:5px solid var(--accent);border-radius:4px 10px 10px 4px;padding:12px 16px;margin:0 0 16px;font-family:var(--mono);font-size:clamp(18px,5.2vw,24px);font-weight:500;display:grid;gap:4px}
+.sys .ix{color:var(--muted);font-size:.65em;margin-right:10px}
+.prompt{font-family:var(--display);font-weight:700;font-size:21px;margin:6px 0 12px}
+.opts{display:grid;gap:10px;margin:0 0 14px}
+.opt{display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:center;text-align:left;background:var(--surface2);color:var(--ink);border:2px solid var(--line);border-radius:10px;padding:11px 12px;font-family:var(--mono);font-size:clamp(16px,4.4vw,19px);white-space:pre-line;min-height:48px}
+.opt .l{font-family:var(--display);font-weight:800;font-size:18px;color:var(--sea)}
+.opt[aria-checked="true"]{border-color:var(--accent);background:var(--surface)}
+.opt.wrong{opacity:.55;text-decoration:line-through;border-style:dashed;cursor:not-allowed}
+.opt.right{border-color:var(--ok);background:var(--okbg)}
+.vars{display:flex;flex-wrap:wrap;gap:14px;margin:0 0 14px}
+.var{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:20px}
+.var .lab{min-width:1.2em;font-weight:600}
+.var input{width:96px;font:inherit;font-size:20px;text-align:center;padding:10px 6px;border:2px solid var(--line);border-radius:10px;background:var(--surface2);color:var(--ink)}
+.var input:focus{border-color:var(--sea);outline:none}
+.var .sg{background:var(--surface2);color:var(--ink);border:2px solid var(--line);border-radius:10px;width:44px;height:48px;font-size:20px;font-family:var(--mono)}
+.var small{display:block;font-family:var(--body);font-size:13px;color:var(--muted)}
+.actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.fb{margin-top:16px;border-radius:10px;padding:12px 14px;border:2px solid;font-size:16px}
+.fb.good{background:var(--okbg);border-color:var(--ok)} .fb.bad{background:var(--badbg);border-color:var(--bad)} .fb.info{background:var(--surface2);border-color:var(--sea)}
+.fb strong{font-family:var(--display);font-size:18px;display:block;margin-bottom:2px}
+.fb .ex{font-family:var(--mono);font-size:15px;margin-top:6px;white-space:pre-wrap}
+.hint{margin-top:12px;font-size:15px;color:var(--muted);border-top:1.5px dashed var(--line);padding-top:10px}
+.linkbtn{background:none;border:0;color:var(--sea);text-decoration:underline;padding:8px 0;font-weight:600;min-height:44px}
+
+/* end */
+.big{font-family:var(--display);font-weight:800;font-size:clamp(44px,12vw,80px);line-height:1}
+.big small{font-size:.35em;color:var(--muted);font-weight:600}
+.sum{display:grid;gap:8px;margin:16px 0}
+.sumrow{display:grid;grid-template-columns:1fr auto;gap:10px;padding:10px 12px;background:var(--surface2);border-radius:10px;font-size:16px}
+.sumrow b{font-family:var(--mono)}
+.review{margin-top:14px;display:grid;gap:6px;font-size:15px}
+.rv{display:grid;grid-template-columns:auto 1fr auto;gap:8px;font-family:var(--mono);font-size:14px;padding:6px 0;border-bottom:1px solid var(--line)}
+.rv .s-ok{color:var(--ok);font-weight:600} .rv .s-rev{color:var(--bad);font-weight:600}
+.note{font-size:15px;color:var(--muted);margin:12px 0 0}
+.rub{display:grid;gap:10px;margin-top:18px}
+.rub h2{font-size:24px;margin:6px 0 2px}
+.rr{background:var(--surface2);border-radius:10px;padding:12px 14px;border-left:5px solid var(--line)}
+.rr.l0{border-color:var(--bad)} .rr.l1{border-color:#C98A12} .rr.l2{border-color:var(--sea)} .rr.l3{border-color:var(--ok)}
+.rr .hd{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline}
+.rr b.nm{font-family:var(--display);font-size:17px}
+.rr .cd{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.rr .lv{font-family:var(--mono);font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+.rr p{margin:4px 0 0;font-size:15px}
+.rr .res{font-family:var(--mono);font-size:13px;color:var(--muted)}
+.glob{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;background:var(--surface);border:2px solid var(--sea);border-radius:10px;padding:12px 14px;font-weight:600}
+@media (prefers-reduced-motion:no-preference){
+  .panel{animation:rise .35s ease-out}
+  @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+}
+@media (max-width:420px){ body{font-size:16px} .card{padding:16px 14px} .var input{width:84px} }
+</style>
+</head>
+<body>
+<main id="app" aria-live="polite"></main>
+<script>
+/*GEN-START*/
+let R=Math.random;
+function hash(str){let h=1779033703^str.length;for(let i=0;i<str.length;i++){h=Math.imul(h^str.charCodeAt(i),3432918353);h=h<<13|h>>>19;}h=Math.imul(h^h>>>16,2246822507);h=Math.imul(h^h>>>13,3266489909);return(h^h>>>16)>>>0;}
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+const rnd=(a,b)=>Math.floor(R()*(b-a+1))+a;
+const pick=a=>a[rnd(0,a.length-1)];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=rnd(0,i);[a[i],a[j]]=[a[j],a[i]];}return a;};
+const nz=(a,b)=>{let v;do v=rnd(a,b);while(v===0);return v;};
+const num=c=>String(c).replace('-','−');
+function lin(terms){
+  let s='';
+  terms.forEach(([c,v])=>{
+    if(c===0)return;
+    const ab=Math.abs(c);
+    const body=v?(ab===1?v:ab+v):String(ab);
+    if(!s)s=(c<0?'−':'')+body; else s+=(c<0?' − ':' + ')+body;
+  });
+  return s||'0';
+}
+const eqStr=(a,b,c)=>lin([[a,'x'],[b,'y']])+' = '+num(c);
+const sat=(r,x,y)=>r.a*x+r.b*y===r.c;
+
+function genSust(){
+  for(;;){
+    const x0=nz(-6,6),y0=nz(-6,6);
+    const v=pick(['x','y']),w=v==='x'?'y':'x';
+    const s=pick([1,-1]),k=nz(-4,4);
+    const e1=v==='x'?{a:s,b:k}:{a:k,b:s};
+    const e2={a:nz(-4,4),b:nz(-4,4)};
+    if(e1.a*e2.b-e2.a*e1.b===0)continue;
+    e1.c=e1.a*x0+e1.b*y0; e2.c=e2.a*x0+e2.b*y0;
+    if(e1.c===0||e2.c===0)continue;
+    const sol={x:x0,y:y0};
+    const cv2=v==='x'?e2.a:e2.b, cw2=v==='x'?e2.b:e2.a;
+    const expr=(p,q)=>lin([[p*s*e1.c,''],[q*(-s*k),w]]);
+    const opts=[[1,1],[1,-1],[-1,1],[-1,-1]].map(([p,q])=>({t:v+' = '+expr(p,q),ok:p===1&&q===1}));
+    const sh=shuffle(opts);
+    const coefW=cw2-cv2*s*k, rhs=e2.c-cv2*s*e1.c;
+    return {
+      kind:0,rows:[e1,e2],
+      statement:{lines:[eqStr(e1.a,e1.b,e1.c),eqStr(e2.a,e2.b,e2.c)]},
+      stages:[
+        {type:'mc',prompt:`Despeja ${v} en la ecuación (1). ¿Qué expresión obtienes?`,options:sh.map(o=>o.t),correct:sh.findIndex(o=>o.ok),
+         hint:`En la ecuación (1), ${v} tiene coeficiente ${s}. Pasa el término en ${w} y el número al otro lado cambiando el signo.`,
+         explain:`${v} = ${expr(1,1)}`},
+        {type:'sol',prompt:'Sustituye esa expresión en la ecuación (2) y resuelve el sistema.',vars:[{name:'x',answer:x0},{name:'y',answer:y0}],
+         hint:`Escribe la expresión de ${v} entre paréntesis en lugar de ${v} en la ecuación (2). Te quedará una ecuación solo con ${w}.`,
+         explain:`Al sustituir en (2): ${lin([[coefW,w]])} = ${num(rhs)}, de donde ${w} = ${num(sol[w])}. Entonces ${v} = ${num(sol[v])}.\nSolución: x = ${num(sol.x)}, y = ${num(sol.y)}`}
+      ]};
+  }
+}
+
+function genIgual(explicit){
+  for(;;){
+    const x0=nz(-6,6),y0=nz(-6,6);
+    const v=pick(['x','y']),u=v==='x'?'y':'x';
+    const vv=v==='x'?x0:y0,uu=v==='x'?y0:x0;
+    const a1=nz(-4,4),a2=nz(-4,4);
+    if(a1===a2)continue;
+    const c1=vv+a1*uu,c2=vv+a2*uu;
+    if(c1===0||c2===0||c1===c2)continue;
+    const mk=(a,c)=>v==='x'?{a:1,b:a,c}:{a:a,b:1,c};
+    const r1=mk(a1,c1),r2=mk(a2,c2);
+    const line=(a,c)=>explicit?`${v} = ${lin([[c,''],[-a,u]])}`:eqStr(...(v==='x'?[1,a,c]:[a,1,c]));
+    const side=(c,a,q,p)=>lin([[p*c,''],[q*(-a),u]]);
+    const combos=[[1,1,1,1],[1,-1,1,-1],[1,1,-1,1],[1,-1,1,1]];
+    // correct: left (+,+) right (+,+); wrong: flip u signs
+    const defs=[
+      {l:side(c1,a1,1,1),r:side(c2,a2,1,1),ok:true},
+      {l:side(c1,a1,-1,1),r:side(c2,a2,-1,1),ok:false},
+      {l:side(c1,a1,1,1),r:side(c2,a2,-1,1),ok:false},
+      {l:side(c1,a1,-1,1),r:side(c2,a2,1,1),ok:false}];
+    const sh=shuffle(defs);
+    const du=a2-a1,dc=c2-c1;
+    return {
+      kind:1,rows:[r1,r2],
+      statement:{lines:[line(a1,c1),line(a2,c2)]},
+      stages:[
+        {type:'mc',prompt:explicit?`Iguala las dos expresiones de ${v}. ¿Qué ecuación en ${u} obtienes?`:`Despeja ${v} en las dos ecuaciones e iguala los resultados. ¿Qué ecuación en ${u} obtienes?`,
+         options:sh.map(o=>o.l+' = '+o.r),correct:sh.findIndex(o=>o.ok),
+         hint:`Si ${v} es igual a dos expresiones, esas dos expresiones son iguales entre sí.`+(explicit?'':` Primero despeja ${v} en cada ecuación.`),
+         explain:`${defs[0].l} = ${defs[0].r}`},
+        {type:'sol',prompt:'Resuelve esa ecuación y calcula la otra incógnita.',vars:[{name:'x',answer:x0},{name:'y',answer:y0}],
+         hint:`Pasa los términos en ${u} a un lado y los números al otro. Con ${u} calculada, sustituye en cualquiera de las expresiones de ${v}.`,
+         explain:`${lin([[du,u]])} = ${num(dc)}, de donde ${u} = ${num(uu)}. Sustituyendo, ${v} = ${num(vv)}.\nSolución: x = ${num(x0)}, y = ${num(y0)}`}
+      ]};
+  }
+}
+
+function genProblem(t){
+  for(;;){
+    let P;
+    if(t===0){
+      const a0=rnd(2,8),n0=rnd(2,8),pa=rnd(9,16),pn=pa-rnd(3,6);
+      const n=a0+n0,T=pa*a0+pn*n0;
+      P={story:`Un grupo escolar visita el Observatorio del Teide. La entrada de adulto cuesta ${pa} € y la infantil ${pn} €. Compran ${n} entradas y pagan ${T} € en total. Sea x el número de entradas de adulto e y el de entradas infantiles.`,
+         sol:{x:a0,y:n0},names:{x:'adultos',y:'niños'},
+         good:[{a:1,b:1,c:n},{a:pa,b:pn,c:T}],
+         bad:[[{a:1,b:1,c:n},{a:pn,b:pa,c:T}],[{a:1,b:1,c:T},{a:pa,b:pn,c:n}],[{a:1,b:-1,c:n},{a:pa,b:pn,c:T}],[{a:pa,b:pn,c:n},{a:1,b:1,c:T}]]};
+    }else if(t===1){
+      const y0=rnd(2,12),x0=y0+rnd(2,10);
+      const S=x0+y0,D=x0-y0;
+      P={story:`Dos sensores del volcán registran lecturas enteras. Su suma es ${S} y su diferencia es ${D}. Sea x la lectura mayor e y la lectura menor.`,
+         sol:{x:x0,y:y0},names:{x:'lectura mayor',y:'lectura menor'},
+         good:[{a:1,b:1,c:S},{a:1,b:-1,c:D}],
+         bad:[[{a:1,b:1,c:D},{a:1,b:-1,c:S}],[{a:1,b:1,c:S},{a:-1,b:1,c:D}],[{a:1,b:1,c:S},{a:1,b:-D,c:0}],[{a:1,b:-1,c:S},{a:1,b:1,c:D}]]};
+    }else if(t===2){
+      const w0=rnd(3,9),d=rnd(2,6),l0=w0+d,Pm=2*(l0+w0);
+      P={story:`Un refugio de montaña tiene planta rectangular. El largo mide ${d} m más que el ancho y el perímetro es de ${Pm} m. Sea x el largo e y el ancho (en metros).`,
+         sol:{x:l0,y:w0},names:{x:'largo',y:'ancho'},
+         good:[{a:1,b:-1,c:d},{a:2,b:2,c:Pm}],
+         bad:[[{a:1,b:-1,c:d},{a:1,b:1,c:Pm}],[{a:-1,b:1,c:d},{a:2,b:2,c:Pm}],[{a:1,b:-1,c:Pm},{a:2,b:2,c:d}],[{a:1,b:1,c:d},{a:2,b:2,c:Pm}]]};
+    }else{
+      const k=pick([2,3,4]),y0=rnd(8,Math.floor(56/k)>14?14:Math.floor(56/k)),x0=k*y0,S=x0+y0;
+      P={story:`En el equipo de guías, la edad del guía veterano es ${k} veces la del aprendiz, y entre los dos suman ${S} años. Sea x la edad del veterano e y la del aprendiz.`,
+         sol:{x:x0,y:y0},names:{x:'edad del veterano',y:'edad del aprendiz'},
+         good:[{a:1,b:-k,c:0},{a:1,b:1,c:S}],
+         bad:[[{a:1,b:-1,c:k},{a:1,b:1,c:S}],[{a:-k,b:1,c:0},{a:1,b:1,c:S}],[{a:1,b:-k,c:0},{a:1,b:-1,c:S}],[{a:1,b:-k,c:0},{a:1,b:1,c:k}]]};
+    }
+    const {x,y}=P.sol;
+    if(!P.good.every(r=>sat(r,x,y)))continue;
+    const bads=P.bad.filter(sys=>!sys.every(r=>sat(r,x,y)));
+    if(bads.length<3)continue;
+    const fmt=sys=>sys.map(r=>eqStr(r.a,r.b,r.c)).join('\n');
+    const opts=shuffle([{t:fmt(P.good),ok:true},...bads.slice(0,3).map(b=>({t:fmt(b),ok:false}))]);
+    return {
+      kind:2,rows:P.good,
+      statement:{story:P.story},
+      stages:[
+        {type:'mc',prompt:'¿Qué sistema plantea correctamente el problema?',options:opts.map(o=>o.t),correct:opts.findIndex(o=>o.ok),
+         hint:'Escribe una ecuación por cada dato del enunciado. Fíjate en qué cantidad multiplica a cada incógnita.',
+         explain:fmt(P.good)},
+        {type:'sol',prompt:'Resuelve el sistema (por sustitución o igualación) y escribe el valor de cada incógnita.',
+         vars:[{name:'x',answer:x,note:P.names.x},{name:'y',answer:y,note:P.names.y}],
+         hint:'Despeja una incógnita en una ecuación y sustituye en la otra. Después comprueba tu resultado en el enunciado.',
+         explain:`x = ${x} (${P.names.x}), y = ${y} (${P.names.y}).`}
+      ]};
+  }
+}
+
+function genGame(){
+  const q=[];
+  for(let i=0;i<4;i++)q.push(genSust());
+  for(let i=0;i<4;i++)q.push(genIgual(i%2===0));
+  shuffle([0,1,2,3]).forEach(t=>q.push(genProblem(t)));
+  return q;
+}
+/*GEN-END*/
+
+const EXP=['Sustitución','Igualación','Planteamiento'];
+const MAXA={mc:2,sol:3}, BASE={mc:[5,3],sol:[10,6,3]};
+const MAXSCORE=12*(BASE.mc[0]+BASE.sol[0]);
+const app=document.getElementById('app');
+let S={screen:'intro',name:'',group:'',qs:[],qi:0,si:0,sel:null,fb:null,hint:false,msg:''};
+
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const curQ=()=>S.qs[S.qi], curSt=()=>curQ().stages[S.si];
+function logOf(q,i){return q.logs[i];}
+function ensureLogs(q){ if(!q.logs)q.logs=q.stages.map(()=>({attempts:[],status:null,hint:false,earned:0})); }
+function total(){return S.qs.reduce((a,q)=>a+(q.logs||[]).reduce((b,l)=>b+l.earned,0),0);}
+function answerText(st,a){ return st.type==='mc'?a.text:a.text; }
+function correctText(st){
+  if(st.type==='mc')return String.fromCharCode(65+st.correct)+') '+st.options[st.correct].replace(/\n/g,'   /   ');
+  return st.vars.map(v=>v.name+' = '+num(v.answer)).join(' ;  ');
+}
+
+const SK='teide-sist-v1:';
+const normName=n=>n.toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'');
+function save(){try{localStorage.setItem(SK+S.key,JSON.stringify({qi:S.qi,si:S.si,screen:S.screen,logs:S.qs.map(q=>q.logs)}));localStorage.setItem(SK+'last',JSON.stringify({name:S.name,group:S.group}));}catch(e){}}
+function load(){try{const r=JSON.parse(localStorage.getItem(SK+S.key));return r&&Array.isArray(r.logs)&&r.logs.length===12?r:null;}catch(e){return null;}}
+function start(){
+  const h=hash(normName(S.name));S.key=String(h);
+  R=mulberry32(h);S.qs=genGame();R=Math.random;S.qs.forEach(ensureLogs);
+  S.qi=0;S.si=0;S.sel=null;S.fb=null;S.hint=false;S.screen='play';
+  const sv=load();
+  if(sv){S.qs.forEach((q,i)=>{if(sv.logs[i]&&sv.logs[i].length===2)q.logs=sv.logs[i];});S.qi=sv.qi;S.si=sv.si;S.screen=sv.screen==='end'?'end':'play';}
+  save();render();
+}
+
+function render(){
+  if(S.screen==='intro')renderIntro();
+  else if(S.screen==='play')renderPlay();
+  else renderEnd();
+  const f=app.querySelector('[data-focus]'); if(f&&S.screen!=='end')try{f.focus({preventScroll:false});}catch(e){}
+}
+
+function renderIntro(){
+  app.innerHTML=`
+  <section class="hero">
+    <div class="eyebrow">Ficha de campo · 3º ESO Matemáticas</div>
+    <h1>Operación <span>Teide</span></h1>
+    <p class="lead">Resuelve sistemas de ecuaciones por sustitución e igualación y plantea problemas. Al terminar, descargas tu informe en PDF para entregarlo.</p>
+  </section>
+  <section class="panel">
+    <ul class="rules">
+      <li><b class="n">12</b><span>pruebas en 3 expedientes: sustitución, igualación y planteamiento de problemas. Cada prueba tiene 2 pasos.</span></li>
+      <li><b class="n">!</b><span>Puedes equivocarte: tienes varios intentos y pistas. Pero tienes que contestar cada paso antes de avanzar.</span></li>
+      <li><b class="n">PDF</b><span>Al final se genera un documento con tus preguntas y respuestas para subir a Classroom.</span></li>
+    </ul>
+    <label class="f" for="nm">Nombre y apellidos</label>
+    <input class="t" id="nm" data-focus autocomplete="name" value="${esc(S.name)}">
+    <label class="f" for="gr">Curso y grupo</label>
+    <input class="t" id="gr" placeholder="3º ESO C" value="${esc(S.group)}">
+    <p class="err" id="e"></p>
+    <button class="btn" id="go">Empezar misión</button>
+    <p class="note">Tus ejercicios son siempre los mismos. Si cierras la página y vuelves a entrar con el mismo nombre, continúas donde lo dejaste (en el mismo dispositivo).</p>
+  </section>`;
+  const go=()=>{
+    S.name=document.getElementById('nm').value.trim(); S.group=document.getElementById('gr').value.trim();
+    if(S.name.length<3){document.getElementById('e').textContent='Escribe tu nombre y apellidos para el informe.';document.getElementById('nm').focus();return;}
+    start();
+  };
+  document.getElementById('go').onclick=go;
+  app.querySelectorAll('input').forEach(i=>i.addEventListener('keydown',e=>{if(e.key==='Enter')go();}));
+}
+
+function ticks(){
+  return `<div class="ticks" aria-hidden="true">`+S.qs.map((q,i)=>{
+    const l=q.logs;let c='';
+    if(i===S.qi)c='cur';
+    else if(l.every(x=>x.status)) c=l.some(x=>x.status==='revealed')?'rev':'ok';
+    return `<div class="tick ${c} ${i===3?'g1':i===7?'g2':''}"></div>`;
+  }).join('')+`</div>`;
+}
+
+function renderPlay(){
+  const q=curQ(),st=curSt(),lg=q.logs[S.si],done=!!lg.status;
+  const sys=q.statement.lines
+    ?`<div class="sys" role="group" aria-label="Sistema de ecuaciones">${q.statement.lines.map((l,i)=>`<div><span class="ix">(${i+1})</span>${esc(l)}</div>`).join('')}</div>`
+    :`<p class="story">${esc(q.statement.story)}</p>`;
+  let body='';
+  if(st.type==='mc'){
+    body=`<div class="opts" role="radiogroup" aria-label="Opciones">`+st.options.map((o,i)=>{
+      const tried=lg.attempts.some(a=>a.idx===i);
+      const cls=(tried&&!lg.attempts.find(a=>a.idx===i).ok)?'wrong':(done&&i===st.correct?'right':'');
+      return `<button class="opt ${cls}" role="radio" aria-checked="${S.sel===i}" data-i="${i}" ${(tried&&cls==='wrong')||done?'disabled':''}><span class="l">${String.fromCharCode(65+i)}</span><span>${esc(o)}</span></button>`;
+    }).join('')+`</div>`;
+  }else{
+    body=`<div class="vars">`+st.vars.map((v,i)=>`
+      <label class="var"><span class="lab">${v.name} =</span>
+        <button type="button" class="sg" data-sg="${i}" aria-label="Cambiar signo de ${v.name}">±</button>
+        <span><input id="v${i}" inputmode="text" autocomplete="off" aria-label="Valor de ${v.name}" ${done?'disabled':''} ${i===0?'data-focus':''}>${v.note?`<small>${esc(v.note)}</small>`:''}</span></label>`).join('')+`</div>`;
+  }
+  const left=MAXA[st.type]-lg.attempts.length;
+  const fb=S.fb?`<div class="fb ${S.fb.k}" role="status"><strong>${esc(S.fb.t)}</strong>${esc(S.fb.m||'')}${S.fb.ex?`<div class="ex">${esc(S.fb.ex)}</div>`:''}</div>`:'';
+  const last=S.qi===11&&S.si===1;
+  app.innerHTML=`
+  <div class="top"><span class="eyebrow">Prueba ${S.qi+1} de 12</span><span class="score">${total()} / ${MAXSCORE} pts</span></div>
+  ${ticks()}
+  <section class="card">
+    <div class="tagrow"><span class="tag">Expediente ${q.kind+1} · ${EXP[q.kind]}</span><span class="tag step">Paso ${S.si+1} de 2</span></div>
+    ${sys}
+    <div class="prompt">${esc(st.prompt)}</div>
+    ${body}
+    <div class="actions">
+      ${done?'':`<button class="btn" id="chk" ${st.type==='mc'&&S.sel===null?'disabled':''}>Comprobar</button>`}
+      ${done?`<button class="btn sea" id="nxt" data-focus>${last?'Ver mi informe':S.si===0?'Siguiente paso':'Siguiente prueba'}</button>`:''}
+      ${!done&&!S.hint?`<button class="linkbtn" id="hnt">Necesito una pista</button>`:''}
+    </div>
+    ${!done?`<div class="note">Intentos disponibles: ${left}</div>`:''}
+    ${S.hint&&!done?`<div class="hint"><b>Pista:</b> ${esc(st.hint)}</div>`:''}
+    ${fb}
+  </section>`;
+  if(st.type==='mc'){
+    app.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{S.sel=+b.dataset.i;S.fb=null;renderKeep();});
+  }else{
+    app.querySelectorAll('.sg').forEach(b=>b.onclick=()=>{const inp=document.getElementById('v'+b.dataset.sg);let t=inp.value.trim();inp.value=t.startsWith('-')||t.startsWith('−')?t.slice(1):'-'+t;inp.focus();});
+    app.querySelectorAll('.vars input').forEach(i=>i.addEventListener('keydown',e=>{if(e.key==='Enter'){const c=document.getElementById('chk');c&&c.click();}}));
+  }
+  const chk=document.getElementById('chk'); if(chk)chk.onclick=check;
+  const h=document.getElementById('hnt'); if(h)h.onclick=()=>{S.hint=true;lg.hint=true;save();renderKeep();};
+  const n=document.getElementById('nxt'); if(n)n.onclick=next;
+}
+function renderKeep(){
+  const vals=[...app.querySelectorAll('.vars input')].map(i=>i.value);
+  renderPlay();
+  app.querySelectorAll('.vars input').forEach((i,k)=>{i.value=vals[k]||'';});
+}
+
+function check(){
+  const q=curQ(),st=curSt(),lg=q.logs[S.si];
+  let ok,text,extra={};
+  if(st.type==='mc'){
+    if(S.sel===null)return;
+    ok=S.sel===st.correct;
+    text=String.fromCharCode(65+S.sel)+') '+st.options[S.sel].replace(/\n/g,'   /   ');
+    extra.idx=S.sel;
+  }else{
+    const raw=st.vars.map((v,i)=>document.getElementById('v'+i).value);
+    const vals=raw.map(r=>r.trim().replace('−','-').replace(',','.'));
+    if(vals.some(v=>!/^-?\d+(\.\d+)?$/.test(v))){S.fb={k:'info',t:'Escribe un número en cada casilla.',m:'Puedes usar el botón ± para el signo. Este intento no cuenta.'};renderKeep();return;}
+    ok=st.vars.every((v,i)=>Number(vals[i])===v.answer);
+    text=st.vars.map((v,i)=>v.name+' = '+num(vals[i])).join(' ;  ');
+  }
+  lg.attempts.push({text,ok,...extra});
+  const n=lg.attempts.length;
+  if(ok){
+    lg.status=n===1?'ok1':'ok';
+    lg.earned=Math.max(1,BASE[st.type][n-1]-(lg.hint?2:0));
+    S.fb={k:'good',t:n===1?'¡Correcto a la primera!':'¡Correcto!',m:`+${lg.earned} puntos. `,ex:st.explain};
+  }else if(n>=MAXA[st.type]){
+    lg.status='revealed';
+    S.fb={k:'bad',t:'Sin intentos. Esta es la solución:',m:'Léela con calma para entender el camino; en la siguiente prueba lo harás mejor.',ex:(st.type==='mc'?correctText(st)+'\n':'')+st.explain};
+  }else{
+    S.fb={k:'bad',t:'Todavía no es correcto.',m:`Revisa tu razonamiento y prueba otra vez. Te quedan ${MAXA[st.type]-n} intento${MAXA[st.type]-n>1?'s':''}.`};
+  }
+  S.sel=null;save();
+  renderPlay();
+  if(lg.status){const nx=document.getElementById('nxt');nx&&nx.focus();}
+}
+
+function next(){
+  S.fb=null;S.hint=false;S.sel=null;
+  if(S.si===0){S.si=1;}
+  else if(S.qi<11){S.qi++;S.si=0;}
+  else{S.screen='end';}
+  save();render();window.scrollTo(0,0);
+}
+
+
+/* ---------- rúbrica ---------- */
+const LV=['Insuficiente','Suficiente','Notable','Sobresaliente'];
+const lvl=r=>r>=.85?3:r>=.65?2:r>=.4?1:0;
+const val=l=>l.status==='ok1'?1:l.status==='ok'?(l.attempts.length===2?.6:.3):0;
+function wr(sel){let a=0,n=0;S.qs.forEach(q=>q.logs.forEach((l,j)=>{if(sel(q,j)){a+=val(l);n++;}}));return n?a/n:0;}
+const RUB=[
+ {code:'MAT 1.1',name:'Interpretar y modelizar problemas',d:[
+  'No identifica el sistema que modeliza el problema y no obtiene sus soluciones.',
+  'Identifica el sistema en algunos problemas tras varios intentos y resuelve con dificultad.',
+  'Plantea y resuelve la mayoría de los problemas; corrige algún error.',
+  'Plantea y resuelve los problemas correctamente, casi siempre a la primera.']},
+ {code:'MAT 1.3',name:'Resolver por sustitución',d:[
+  'No despeja ni sustituye correctamente; necesita ver las soluciones.',
+  'Despeja o sustituye con errores frecuentes y llega al resultado en pocas pruebas.',
+  'Aplica el método con algún error de signos o cálculo que corrige.',
+  'Aplica el método con precisión y obtiene las soluciones casi siempre a la primera.']},
+ {code:'MAT 1.3',name:'Resolver por igualación',d:[
+  'No iguala las expresiones correctamente; necesita ver las soluciones.',
+  'Iguala con errores frecuentes y llega al resultado en pocas pruebas.',
+  'Aplica el método con algún error de signos o cálculo que corrige.',
+  'Aplica el método con precisión y obtiene las soluciones casi siempre a la primera.']},
+ {code:'MAT 9.2',name:'Perseverar y aprender del error',d:[
+  'Tras equivocarse no corrige: en casi todos los errores se le muestra la solución.',
+  'Reconoce y corrige solo algunos de sus errores al reintentar.',
+  'Reconoce y corrige la mayoría de sus errores revisando el procedimiento.',
+  'Reconoce y corrige todos o casi todos sus errores, o no comete errores relevantes.']}
+];
+function rubric(){
+  const out=[];
+  const pct=r=>Math.round(100*r)+' % de acierto';
+  let r=wr(q=>q.kind===2);out.push({...RUB[0],lv:lvl(r),res:pct(r)});
+  r=wr(q=>q.kind===0);out.push({...RUB[1],lv:lvl(r),res:pct(r)});
+  r=wr(q=>q.kind===1);out.push({...RUB[2],lv:lvl(r),res:pct(r)});
+  let e=0,c=0;
+  S.qs.forEach(q=>q.logs.forEach(l=>{if(l.attempts.some(a=>!a.ok)){e++;if(l.status!=='revealed')c++;}}));
+  out.push({...RUB[3],lv:e?lvl(c/e):3,res:e?c+' de '+e+' errores corregidos':'Sin errores'});
+  const m=out.reduce((a,x)=>a+x.lv,0)/out.length;
+  return {rows:out,global:LV[Math.round(m)]};
+}
+
+/* ---------- informe ---------- */
+function stats(){
+  const out=[0,1,2].map(k=>({k,pts:0,max:0,ok:0,n:0}));
+  S.qs.forEach(q=>q.logs.forEach((l,i)=>{const o=out[q.kind];o.n++;o.pts+=l.earned;o.max+=BASE[q.stages[i].type][0];if(l.status==='ok1'||l.status==='ok')o.ok++;}));
+  return out;
+}
+function renderEnd(){
+  const st=stats(),tot=total(),pct=Math.round(100*tot/MAXSCORE);
+  const msg=pct>=85?'Misión cumplida con nota de campeón.':pct>=60?'Buen trabajo: ya dominas lo esencial.':pct>=35?'Vas por buen camino. Repasa las pruebas en rojo.':'Hay que repasar el método. Vuelve a intentarlo con calma.';
+  app.innerHTML=`
+  <section class="hero" style="padding-top:24px">
+    <div class="eyebrow">Informe de misión · ${esc(S.name)}</div>
+    <div class="big">${tot}<small> / ${MAXSCORE} puntos</small></div>
+    <p class="lead" style="margin-top:8px">${msg}</p>
+  </section>
+  <section class="panel">
+    <div class="sum">${st.map(s=>`<div class="sumrow"><span>Expediente ${s.k+1} · ${EXP[s.k]}</span><b>${s.ok}/${s.n} pasos · ${s.pts}/${s.max}</b></div>`).join('')}</div>
+    <div class="actions">
+      <button class="btn" id="pdf">Descargar informe en PDF</button>
+      
+    </div>
+    <p class="err" id="e" role="status"></p>
+    <p class="note" style="margin-top:0">Sube el PDF descargado a la tarea de Classroom. El informe contiene tus preguntas, todos tus intentos y las soluciones.</p>
+    <div class="rub"><h2>Evaluación por rúbrica</h2>
+      ${(()=>{const R=rubric();return R.rows.map(x=>`<div class="rr l${x.lv}"><div class="hd"><b class="nm">${esc(x.name)} <span class="cd">${esc(x.code)}</span></b><span class="lv">${LV[x.lv]}</span></div><p>${esc(x.d[x.lv])}</p><div class="res">${esc(x.res)}</div></div>`).join('')+`<div class="glob"><span>Nivel global: ${R.global}</span></div>`;})()}
+    </div>
+    <div class="review">${S.qs.map((q,i)=>q.logs.map((l,j)=>`<div class="rv"><span>${i+1}.${j+1}</span><span>${EXP[q.kind]} · ${j?'resolver':'método'}</span><span class="${l.status==='revealed'?'s-rev':'s-ok'}">${l.status==='revealed'?'revisar':'ok'} ${l.earned}p</span></div>`).join('')).join('')}</div>
+  </section>`;
+  document.getElementById('pdf').onclick=download;
+}
+
+const lat=t=>String(t).replace(/[−–—]/g,'-').replace(/→/g,'->').replace(/€/g,' euros').replace(/[“”]/g,'"').replace(/[‘’]/g,"'").replace(/…/g,'...').replace(/±/g,'+/-').replace(/[^\x00-\xFF]/g,'?');
+function buildPDF(){
+  const {jsPDF}=window.jspdf, doc=new jsPDF({unit:'mm',format:'a4'});
+  const M=16,CW=178;let y=0;
+  const col={ink:[18,32,31],mut:[76,96,93],ok:[15,122,74],bad:[179,38,30],acc:[209,58,23],dark:[20,32,31]};
+  function add(str,o={}){
+    const size=o.size||10,lh=size*0.46+0.9;
+    doc.setFont('helvetica',o.bold?'bold':(o.mono?'courier':'normal'));doc.setFontSize(size);doc.setTextColor(...(o.color||col.ink));
+    doc.splitTextToSize(lat(str),CW-(o.indent||0)).forEach(l=>{
+      if(y>280){doc.addPage();y=18;}
+      doc.text(l,M+(o.indent||0),y);y+=lh;
+    });
+    y+=(o.after||0);
+  }
+  const tot=total(),now=new Date();
+  const fecha=now.toLocaleDateString('es-ES',{day:'2-digit',month:'2-digit',year:'numeric'})+' '+now.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
+  doc.setFillColor(...col.dark);doc.rect(0,0,210,34,'F');
+  doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(20);doc.text('Operacion Teide - Informe de mision',M,16);
+  doc.setFont('helvetica','normal');doc.setFontSize(10);doc.text('Sistemas de ecuaciones: sustitucion, igualacion y problemas  |  3º ESO Matematicas',M,25);
+  y=44;
+  add('Alumno/a: '+S.name,{bold:true,size:12});
+  add('Curso y grupo: '+(S.group||'-')+'      Fecha: '+fecha,{size:10,color:col.mut});
+  add('Puntuacion total: '+tot+' / '+MAXSCORE,{bold:true,size:12,after:1});
+  stats().forEach(s=>add('Expediente '+(s.k+1)+' ('+EXP[s.k]+'): '+s.ok+'/'+s.n+' pasos correctos - '+s.pts+'/'+s.max+' puntos',{size:10}));
+  y+=3;
+  (function(){
+    const R=rubric(),cw=[38,35,35,35,35],T=7.5;
+    add('Evaluacion por rubrica (criterios observables en la prueba)',{bold:true,size:11.5,color:col.acc,after:1});
+    doc.setFontSize(T);
+    let x=M;doc.setFillColor(...col.dark);doc.setDrawColor(...col.mut);doc.setLineWidth(0.2);
+    ['Criterio',...LV].forEach((t,i)=>{doc.rect(x,y,cw[i],6,'FD');doc.setFont('helvetica','bold');doc.setTextColor(255,255,255);doc.text(lat(t),x+1.5,y+4.1);x+=cw[i];});
+    y+=6;
+    R.rows.forEach(r=>{
+      const cells=[null,...r.d].map((t,i)=>doc.splitTextToSize(lat(i===0?r.name+' ('+r.code+')':t),cw[i]-3));
+      const resL=doc.splitTextToSize(lat('Resultado: '+r.res),cw[0]-3);
+      const lines=Math.max(cells[0].length+resL.length,...cells.slice(1).map(c=>c.length));
+      const h=lines*3.3+3;
+      if(y+h>285){doc.addPage();y=18;}
+      x=M;
+      for(let i=0;i<5;i++){
+        const hit=i===r.lv+1;
+        doc.setFillColor(...(hit?[205,235,219]:[255,255,255]));doc.setDrawColor(...col.mut);
+        doc.rect(x,y,cw[i],h,'FD');
+        doc.setFont('helvetica',(hit||i===0)?'bold':'normal');doc.setFontSize(T);doc.setTextColor(...(i===0?col.ink:hit?col.ok:col.mut));
+        doc.text(cells[i],x+1.5,y+3.6);
+        if(i===0){doc.setFont('helvetica','normal');doc.setTextColor(...col.mut);doc.text(resL,x+1.5,y+3.6+cells[0].length*3.3);}
+        x+=cw[i];
+      }
+      y+=h;
+    });
+    y+=4;
+    add('Nivel global de logro: '+R.global,{bold:true,size:10.5,after:1});
+    add('Observaciones del docente: ________________________________________________________________',{size:9,color:col.mut,after:1});
+    add('______________________________________________________________________________________________',{size:9,color:col.mut});
+  })();
+  y+=3;
+  S.qs.forEach((q,i)=>{
+    if(y>235){doc.addPage();y=18;}
+    doc.setDrawColor(...col.acc);doc.setLineWidth(0.5);doc.line(M,y,M+CW,y);y+=5;
+    add('Prueba '+(i+1)+' - Expediente '+(q.kind+1)+': '+EXP[q.kind],{bold:true,size:11.5,color:col.acc,after:1});
+    if(q.statement.lines)q.statement.lines.forEach((l,k)=>add('('+(k+1)+')  '+l,{mono:true,size:11,indent:3}));
+    else add(q.statement.story,{size:10,indent:3});
+    y+=1.5;
+    q.stages.forEach((st,j)=>{
+      const lg=q.logs[j];
+      if(y>250){doc.addPage();y=18;}
+      add('Paso '+(j+1)+': '+st.prompt,{bold:true,size:10,after:0.5});
+      lg.attempts.forEach((a,k)=>add('Intento '+(k+1)+':  '+a.text+'   ->   '+(a.ok?'CORRECTO':'INCORRECTO'),{size:9.5,indent:4,color:a.ok?col.ok:col.bad}));
+      if(!lg.attempts.length)add('Sin respuesta.',{size:9.5,indent:4,color:col.bad});
+      if(lg.status==='revealed'){
+        add('Respuesta correcta: '+correctText(st).replace(/\n/g,' / '),{size:9.5,indent:4,color:col.mut});
+        add('Resolucion: '+st.explain.replace(/\n/g,' '),{size:9,indent:4,color:col.mut});
+      }
+      add('Pista usada: '+(lg.hint?'si':'no')+'   |   Puntos: '+lg.earned,{size:9,indent:4,color:col.mut,after:2});
+    });
+    y+=2;
+  });
+  const n=doc.getNumberOfPages();
+  for(let p=1;p<=n;p++){doc.setPage(p);doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(120,130,128);
+    doc.text(lat('Operacion Teide - '+S.name+' - pagina '+p+' de '+n),M,291);}
+  return doc;
+}
+async function download(){
+  const e=document.getElementById('e');e.style.color='';e.textContent='';
+  let doc;
+  try{doc=buildPDF();}catch(err){e.textContent='No se pudo crear el PDF: '+err.message;return;}
+  const blob=doc.output('blob');
+  const slug=lat(S.name).normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^A-Za-z0-9]+/g,'_').replace(/^_|_$/g,'').slice(0,40)||'alumno';
+  const filename='Sistemas_Teide_'+slug+'.pdf';
+  let dl=null;
+  try{dl=window.claude&&window.claude.use?await window.claude.use('downloads'):null;}catch(_){dl=null;}
+  try{
+    if(dl){await dl.save({filename,data:blob});e.style.color='var(--ok)';e.textContent='PDF guardado. Ya puedes subirlo a Classroom.';}
+    else{
+      const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename;document.body.appendChild(a);a.click();a.remove();
+      e.style.color='var(--ok)';e.textContent='Descarga iniciada. Si no aparece el archivo, avisa a tu profesor/a.';
+    }
+  }catch(err){
+    const c=err&&err.code;
+    e.style.color='var(--bad)';
+    e.textContent=c==='declined'?'Cancelaste la descarga. Pulsa de nuevo cuando quieras guardar el PDF.':'No se pudo guardar el PDF ('+(c||err.message||'error')+'). Inténtalo de nuevo.';
+  }
+}
+
+try{const l=JSON.parse(localStorage.getItem(SK+'last'));if(l){S.name=l.name||'';S.group=l.group||'';}}catch(e){}
+render();
+</script>
+</body>
+</html>
+
+</body></html>
